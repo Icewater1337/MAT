@@ -1,14 +1,14 @@
-<ion-header>
-  <ion-navbar>
-    <ion-title>
-      Ionic Blank
-    </ion-title>
-  </ion-navbar>
-</ion-header>
-
 <ion-content padding>
-  The world is your oyster.
-  <p>
-    If you get lost, the <a href="http://ionicframework.com/docs/v2">docs</a> will be your guide.
-  </p>
+  <div>
+    <ion-item id="calc">
+      <ion-label>{{calculation}}</ion-label>
+    </ion-item>
+
+    <div id="container">
+      <ion-item id="rounded">
+        <ion-input maxLength="4" type="text"></ion-input>
+      </ion-item>
+    </div>
+  </div>
+
 </ion-content>

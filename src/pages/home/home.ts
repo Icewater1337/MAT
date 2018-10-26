@@ -11,4 +11,12 @@ export class HomePage {
 
   }
 
+  calculation: string = "2017-17";
+  myVal1: string = "5";
+
+  refresh()
+  {
+    this.myVal1 = this.calculation;
+  }
+
 }
