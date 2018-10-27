@@ -1,21 +1,24 @@
-<ion-content padding>
-  <h2>{{countDown | async}}</h2>
-  <round-progress
-    [current]="current"
-    [max]="max"
-    [stroke]=15
-    [radius]=50
-    [semicircle]=false
-    [rounded]=false
-    [responsive]=false
-    [clockwise]=false
-    [color]="color"
-    [background]="background"
-    [duration]="duration"
-></round-progress>
+<ion-content padding [ngClass]="{'bg-red': changeColor}">
+
   <div id="container">
 
     <ion-list>
+      <ion-item>
+        <h2>{{countDown | async}}</h2>
+        <round-progress
+          [current]="current"
+          [max]="availableAnswerTime"
+          [stroke]=15
+          [radius]=50
+          [semicircle]=false
+          [rounded]=false
+          [responsive]=false
+          [clockwise]=false
+          [color]="color"
+          [background]="background"
+          [duration]="duration"
+        ></round-progress>
+      </ion-item>
       <ion-item id="calc">
         <ion-label>{{calculation}}</ion-label>
       </ion-item>
