@@ -1,4 +1,18 @@
 <ion-content padding>
+  <round-progress
+    [current]="current"
+    [max]="max"
+    [stroke]="stroke"
+    [radius]="radius"
+    [semicircle]="semicircle"
+    [rounded]="rounded"
+    [responsive]="responsive"
+    [clockwise]="clockwise"
+    [color]="gradient ? 'url(#gradient)' : color"
+    [background]="background"
+    [duration]="duration"
+    [animation]="animation"
+    [animationDelay]="animationDelay"></round-progress>
   <div id="container">
 
     <ion-list>
@@ -7,7 +21,7 @@
       </ion-item>
 
       <ion-item id="rounded">
-        <ion-input maxLength="4" type="text"></ion-input>
+        <ion-input [(ngModel)]="input" (keyup.enter)="updateCalc()" maxLength="4" type="text"></ion-input>
       </ion-item>
     </ion-list>
 
