@@ -1,18 +1,18 @@
 <ion-content padding>
+  <h2>{{countDown | async}}</h2>
   <round-progress
     [current]="current"
     [max]="max"
-    [stroke]="stroke"
-    [radius]="radius"
-    [semicircle]="semicircle"
-    [rounded]="rounded"
-    [responsive]="responsive"
-    [clockwise]="clockwise"
-    [color]="gradient ? 'url(#gradient)' : color"
+    [stroke]=15
+    [radius]=50
+    [semicircle]=false
+    [rounded]=false
+    [responsive]=false
+    [clockwise]=false
+    [color]="color"
     [background]="background"
     [duration]="duration"
-    [animation]="animation"
-    [animationDelay]="animationDelay"></round-progress>
+></round-progress>
   <div id="container">
 
     <ion-list>

@@ -2,6 +2,11 @@ import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { primeNbrContainer} from './primeNbrContainer';
 import {RoundProgressEase} from 'round-progress.ease';
+import { Observable } from 'rxjs/Observable'
+import 'rxjs/add/observable/timer'
+import 'rxjs/add/operator/map'
+import 'rxjs/add/operator/take'
+import { Pipe, PipeTransform } from '@angular/core';
 
 
 @Component({
@@ -10,22 +15,18 @@ import {RoundProgressEase} from 'round-progress.ease';
 })
 export class HomePage {
 
-  current: number = 27;
-  max: number = 50;
+  current: number = 5;
+  max: number = 5;
   stroke: number = 15;
   radius: number = 125;
   semicircle: boolean = false;
   rounded: boolean = false;
   responsive: boolean = false;
   clockwise: boolean = true;
-  color: string = '#45ccce';
+  color: string = '#ce1609';
   background: string = '#eaeaea';
   duration: number = 800;
-  animation: string = 'easeOutCubic';
-  animationDelay: number = 0;
-  animations: string[] = [];
-  gradient: boolean = false;
-  realCurrent: number = 0;
+
 
   calculation: string = "2017-17";
   subtractors: number[] = [7,13];
@@ -33,6 +34,11 @@ export class HomePage {
   bigPrimeNumbers: number[] = primeNbrContainer.getBigPrimeNbrs();
   input: number = 0;
   subtractor: number = 0;
+
+  countDown;
+  counter = 5;
+  tick = 1000;
+
 
   getRandomNbr(list: number[]) {
     return list[Math.floor(Math.random() * list.length)];
@@ -54,7 +60,17 @@ export class HomePage {
     }
     this.input = null;
 
+    this.countDown = Observable.timer(0, this.tick)
+      .take(this.counter)
+      .map(() => {
+      this.current = this.counter;
+        return --this.counter;
+      }
+    )
+
   }
+
+
   refresh()
   {
   }
@@ -63,4 +79,5 @@ export class HomePage {
     this.calculation = randomBigPrimeNbr + " - " + subtractor;
 
   }
+
 }
