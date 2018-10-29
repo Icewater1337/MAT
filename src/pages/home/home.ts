@@ -14,6 +14,8 @@ import {Howl, Howler} from 'howler';
 })
 export class HomePage {
 
+  classVariable: string = '';
+
   // parts needed for the countdown timer
   current: number = 5;
   availableAnswerTime: number = 5;
@@ -32,7 +34,7 @@ export class HomePage {
   subtractors: number[] = [7,13];
   randomBigPrimeNbr: number = 15;
   bigPrimeNumbers: number[] = primeNbrContainer.getBigPrimeNbrs();
-  input: String = "";
+  input: string = "";
   subtractor: number = 0;
 
   countDown;
@@ -78,12 +80,16 @@ export class HomePage {
   }
 
   private wrongAnswerRoutine() {
+    this.classVariable = 'animated shake';
+
     let sound = new Howl({
       src: ['http://localhost:8100/assets/wrong.mp3']
     });
 
     sound.play();
 
+
+    //$('.input').addClass('animated shake');
 
     // increase available answer time and restart
     this.availableAnswerTime = this.availableAnswerTime +3;
@@ -106,6 +112,7 @@ export class HomePage {
           --this.counter;
           if ( this.counter <= this.availableAnswerTime -2 ) {
             this.changeColor=false;
+            this.classVariable = '';
 
           }
           if ( this.counter <= 0) {
