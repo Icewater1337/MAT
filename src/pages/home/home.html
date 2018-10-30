@@ -7,26 +7,29 @@
 
     <ion-list>
       <ion-item>
+        <div class="progress-wrapper"  ng-style="{'font-size': getFontSize()}">
+          <div class="progress">
+            <h2 class="progress"><b>{{countDown | async}}</b></h2>
+          </div>
 
+          <round-progress
+            [current]="current"
+            [max]="availableAnswerTime"
+            [stroke]=15
+            [radius]=100
+            [semicircle]=false
+            [rounded]=false
+            [responsive]=false
+            [clockwise]=false
+            [color]="color"
+            [background]="background"
+            [duration]="duration"
+          ></round-progress>
+        </div>
 
-
-        <h2 class="progress">{{countDown | async}}</h2>
-        <round-progress
-          [current]="current"
-          [max]="availableAnswerTime"
-          [stroke]=15
-          [radius]=100
-          [semicircle]=false
-          [rounded]=false
-          [responsive]=false
-          [clockwise]=false
-          [color]="color"
-          [background]="background"
-          [duration]="duration"
-        ></round-progress>
       </ion-item>
       <ion-item id="calc">
-        <ion-label class="big-font">{{calculation}}</ion-label>
+        <ion-label class="big-font" color="dark">{{calculation}}</ion-label>
         <ion-input [(ngModel)]="input" class="big-font" id="answerField" #inputField (keyup.enter)="updateCalc()" maxLength="4" type="text"></ion-input>
 
       </ion-item>
