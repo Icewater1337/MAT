@@ -1,11 +1,5 @@
 page-home {
 
-  #rounded {
-    width: 100%;
-    height: 100px;
-    background-color: grey;
-  }
-
   #container {
     width: 100px;
     margin-left:auto;
@@ -13,13 +7,37 @@ page-home {
   }
 
   #calc {
-    width: 100px;
+    width: 300px;
     height: 100px;
     margin-left:auto;
     margin-right: auto;
   }
+
+  .progress-wrapper{
+    position: relative;
+    margin:20px auto;
+    font-size: 21px;
+  }
+  .progress{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    line-height: 6em;
+    font-size:1em;
+    text-align: center;
+    color: #886aea;
+    font-weight: 100;
+  }
+
+  #answerField {
+    background-color: #ffe8d1;
+  }
   .bg-red{
     background-color: red;
+  }
+
+  .big-font {
+    font-size: 35px;
   }
 
   ion-content {

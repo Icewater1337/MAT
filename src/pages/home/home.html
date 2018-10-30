@@ -4,14 +4,18 @@
 
   <div id="container" [class]="classVariable">
 
+
     <ion-list>
       <ion-item>
-        <h2>{{countDown | async}}</h2>
+
+
+
+        <h2 class="progress">{{countDown | async}}</h2>
         <round-progress
           [current]="current"
           [max]="availableAnswerTime"
           [stroke]=15
-          [radius]=50
+          [radius]=100
           [semicircle]=false
           [rounded]=false
           [responsive]=false
@@ -22,12 +26,12 @@
         ></round-progress>
       </ion-item>
       <ion-item id="calc">
-        <ion-label>{{calculation}}</ion-label>
+        <ion-label class="big-font">{{calculation}}</ion-label>
+        <ion-input [(ngModel)]="input" class="big-font" id="answerField" #inputField (keyup.enter)="updateCalc()" maxLength="4" type="text"></ion-input>
+
       </ion-item>
 
-      <ion-item id="rounded">
-        <ion-input [(ngModel)]="input" (keyup.enter)="updateCalc()" maxLength="4" type="text"></ion-input>
-      </ion-item>
+
     </ion-list>
 
   </div>

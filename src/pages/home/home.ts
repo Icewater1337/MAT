@@ -1,4 +1,3 @@
-import { Component } from '@angular/core';
 import {Ion, NavController} from 'ionic-angular';
 import { primeNbrContainer} from './primeNbrContainer';
 import { Observable } from 'rxjs/Observable'
@@ -6,6 +5,8 @@ import 'rxjs/add/observable/timer'
 import 'rxjs/add/operator/map'
 import 'rxjs/add/operator/take'
 import {Howl, Howler} from 'howler';
+import {Component, Input, ViewChild} from '@angular/core';
+
 
 
 @Component({
@@ -35,6 +36,7 @@ export class HomePage {
   randomBigPrimeNbr: number = 15;
   bigPrimeNumbers: number[] = primeNbrContainer.getBigPrimeNbrs();
   input: string = "";
+  @ViewChild('inputField') myInput ;
   subtractor: number = 0;
 
   countDown;
@@ -72,10 +74,11 @@ export class HomePage {
 
     this.counterRoutine();
 
+    this.myInput.setFocus();
   }
 
   private updateCalculationDisplay(randomBigPrimeNbr: number, subtractor: number) {
-    this.calculation = randomBigPrimeNbr + " - " + subtractor;
+    this.calculation = randomBigPrimeNbr + " - " + subtractor + " = ";
 
   }
 
@@ -102,6 +105,13 @@ export class HomePage {
   }
 
 
+  ionViewDidLoad() {
+
+    setTimeout(() => {
+      this.myInput.setFocus();
+    },150);
+
+  }
 
   private counterRoutine() {
     this.counter = this.availableAnswerTime;
