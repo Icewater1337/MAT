@@ -43,7 +43,7 @@ export class HomePage {
   subtractor: number = 0;
 
   totalTimer;
-  totalTimeCounter = 300;
+  totalTimeCounter = 20;
   started = false;
 
   countDown;
@@ -180,6 +180,7 @@ export class HomePage {
       subTitle: 'You are finished!, you reached '+ this.nbrOfPoints,
       buttons: ['Dismiss']
     });
+    this.countDown = null;
     alert.present();
   }
 }
