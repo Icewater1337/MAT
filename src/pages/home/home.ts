@@ -177,7 +177,7 @@ export class HomePage {
   presentAlert() {
     let alert = this.alertCtrl.create({
       title: 'Done',
-      subTitle: 'You are finished!',
+      subTitle: 'You are finished!, you reached '+ this.nbrOfPoints,
       buttons: ['Dismiss']
     });
     alert.present();
