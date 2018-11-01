@@ -29,7 +29,7 @@
       </ion-item>
       <ion-item id="calc">
         <ion-label class="big-font" color="dark">{{calculation}}</ion-label>
-        <ion-input [(ngModel)]="input" class="big-font" id="answerField" #inputField (keyup.enter)="updateCalc()" maxLength="4" type="text"></ion-input>
+        <ion-input [(ngModel)]="input" class="big-font" id="answerField" #inputField (keyup)="updateCalc()" maxLength="4" type="text"></ion-input>
 
       </ion-item>
 

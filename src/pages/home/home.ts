@@ -84,6 +84,11 @@ export class HomePage {
 
   }
   updateCalc() {
+
+   if (this.myInput._value.length <4) {
+     return;
+   }
+
     let wasInputRight: boolean;
     wasInputRight =  (parseInt(this.input) == (this.randomBigPrimeNbr - this.subtractor));
     if ( wasInputRight) {
@@ -129,7 +134,7 @@ export class HomePage {
 
     // increase available answer time and restart
     if ( this.availableAnswerTime < this.maxTimeLimit) {
-      this.availableAnswerTime = this.availableAnswerTime ++;
+      this.availableAnswerTime = this.availableAnswerTime +1;
 
     }
     this.randomBigPrimeNbr = this.getRandomNbr(this.bigPrimeNumbers);
