@@ -1,11 +1,11 @@
-import {Ion, Platform, AlertController , NavController} from 'ionic-angular';
+import { Platform, AlertController , NavController} from 'ionic-angular';
 import { primeNbrContainer} from './primeNbrContainer';
 import { Observable } from 'rxjs/Observable'
 import 'rxjs/add/observable/timer'
 import 'rxjs/add/operator/map'
 import 'rxjs/add/operator/take'
 import {Howl, Howler} from 'howler';
-import {Component, Input, ViewChild} from '@angular/core';
+import {Component,  ViewChild} from '@angular/core';
 
 
 
@@ -43,13 +43,15 @@ export class HomePage {
   subtractor: number = 0;
 
   totalTimer;
-  totalTimeCounter = 20;
+  totalTimeCounter = 600;
+  pointLimit: number = 70;
   started = false;
 
   countDown;
   tick = 1000;
   counter = 5;
   consecutiveCorrectAnswerCounter = 0;
+  rightAnswerCounter: number;
   nbrOfPoints: number;
 
 
@@ -63,6 +65,7 @@ export class HomePage {
     this.updateCalculationDisplay(this.randomBigPrimeNbr, this.subtractor);
     this.input = "";
     this.consecutiveCorrectAnswerCounter = 0;
+    this.rightAnswerCounter = 0;
     this.nbrOfPoints = 0;
 
 
@@ -92,22 +95,30 @@ export class HomePage {
     let wasInputRight: boolean;
     wasInputRight =  (parseInt(this.input) == (this.randomBigPrimeNbr - this.subtractor));
     if ( wasInputRight) {
-      this.nbrOfPoints++;
+      // add more points for consecutive correct answers
+      this.rightAnswerCounter++;
       this.consecutiveCorrectAnswerCounter ++;
-      if ( this.consecutiveCorrectAnswerCounter >= 4) {
-        this.consecutiveCorrectAnswerCounter = 0;
+      this.nbrOfPoints = this.nbrOfPoints + this.consecutiveCorrectAnswerCounter;
+
+      this.randomBigPrimeNbr = this.randomBigPrimeNbr - this.subtractor;
+
+
+      // Add random event if 4 or more correct answers are given consecutively
+      if ( (this.rightAnswerCounter % 4) == 0) {
         this.subtractor = this.getRandomNbr(this.additionalSubtractors);
       }
-      this.randomBigPrimeNbr = this.randomBigPrimeNbr - this.subtractor;
-      //this.subtractor = this.getRandomNbr(this.subtractors);
+
       this.updateCalculationDisplay(this.randomBigPrimeNbr, this.subtractor)
       // Decrease available answerTime
       -- this.availableAnswerTime;
     } else {
-      this.wrongAnswerRoutine();
+       this.wrongAnswerRoutine();
 
     }
-
+    // Check if points are reached to stop.
+    if ( this.nbrOfPoints >= this.pointLimit) {
+      this.presentAlert();
+    }
     if ( this.started == false) {
       this.started = true;
       this.timerTick();
@@ -124,6 +135,11 @@ export class HomePage {
   }
 
   private wrongAnswerRoutine() {
+    this.consecutiveCorrectAnswerCounter = 0;
+    if ( this.nbrOfPoints > 0) {
+      this.nbrOfPoints--;
+
+    }
     this.classVariable = 'animated shake';
 
     let sound = new Howl({
