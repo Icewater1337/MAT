@@ -15,12 +15,32 @@ import {Component,  ViewChild} from '@angular/core';
 })
 export class HomePage {
 
+  // Variables: Adjust as needed.
+  // The default subtrahends
+  subtrahends: number[] = [7,13];
+  //After 4 correct answers are given, one of the folowing is selected as the new subtrahend
+  additionalSubtrahends: number[] = [11,17,19,23,29];
+  // Initial time that is available for each answer
+  availableAnswerTime: number = 5;
+  // Maximum available time for one answer
+  maxTimeLimit: number = 20;
+  // Points to reach until it stops
+  pointLimit: number = 70;
+  // Time to reach until it stops
+  totalTimeCounter = 600;
+  // Shake the screen on wrong answer or not
+  useShake: boolean = true;
+  // use sound on wrong answer or not
+  useSound: boolean = false;
+  // use red screen on wrong answer or not
+  useRedScreen: boolean = true;
+
+  // DO not touch the following
   classVariable: string = '';
 
   // parts needed for the countdown timer
-  maxTimeLimit: number = 20;
+
   current: number = 5;
-  availableAnswerTime: number = 5;
   stroke: number = 15;
   radius: number = 125;
   semicircle: boolean = false;
@@ -32,27 +52,23 @@ export class HomePage {
   duration: number = 1000;
 
   changeColor: boolean = false;
-  calculation: string = "2017-17";
-  subtractors: number[] = [7,13];
-  additionalSubtractors: number[] = [11,17,19,23,29];
+  calculation: string = "";
+
   randomBigPrimeNbr: number = 15;
   bigPrimeNumbers: number[] = primeNbrContainer.getBigPrimeNbrs();
   input: string = "";
 
   @ViewChild('inputField') myInput ;
-  subtractor: number = 0;
-
+  subtrahend: number = 0;
   totalTimer;
-  totalTimeCounter = 600;
-  pointLimit: number = 70;
   started = false;
-
   countDown;
   tick = 1000;
   counter = 5;
   consecutiveCorrectAnswerCounter = 0;
   rightAnswerCounter: number;
   nbrOfPoints: number;
+  firstAnswer: boolean;
 
 
   getRandomNbr(list: number[]) {
@@ -61,8 +77,8 @@ export class HomePage {
 
   constructor(public navCtrl: NavController, private alertCtrl: AlertController, platform: Platform) {
     this.randomBigPrimeNbr = this.getRandomNbr(this.bigPrimeNumbers);
-    this.subtractor = this.getRandomNbr(this.subtractors);
-    this.updateCalculationDisplay(this.randomBigPrimeNbr, this.subtractor);
+    this.subtrahend = this.getRandomNbr(this.subtrahends);
+    this.buildCalculationString(this.randomBigPrimeNbr, this.subtrahend);
     this.input = "";
     this.consecutiveCorrectAnswerCounter = 0;
     this.rightAnswerCounter = 0;
@@ -77,7 +93,7 @@ export class HomePage {
     {
       this.totalTimeCounter--;
       if (this.totalTimeCounter <= 0) {
-        this.presentAlert();
+        this.playerDoneAlert();
         return;
       } else if (this.totalTimeCounter > 0) {
         this.timerTick();
@@ -93,33 +109,37 @@ export class HomePage {
    }
 
     let wasInputRight: boolean;
-    wasInputRight =  (parseInt(this.input) == (this.randomBigPrimeNbr - this.subtractor));
+    wasInputRight =  (parseInt(this.input) == (this.randomBigPrimeNbr - this.subtrahend));
     if ( wasInputRight) {
       // add more points for consecutive correct answers
       this.rightAnswerCounter++;
       this.consecutiveCorrectAnswerCounter ++;
       this.nbrOfPoints = this.nbrOfPoints + this.consecutiveCorrectAnswerCounter;
 
-      this.randomBigPrimeNbr = this.randomBigPrimeNbr - this.subtractor;
+      this.randomBigPrimeNbr = this.randomBigPrimeNbr - this.subtrahend;
 
 
       // Add random event if 4 or more correct answers are given consecutively
       if ( (this.rightAnswerCounter % 4) == 0) {
-        this.subtractor = this.getRandomNbr(this.additionalSubtractors);
+        this.subtrahend = this.getRandomNbr(this.additionalSubtrahends);
       }
 
-      this.updateCalculationDisplay(this.randomBigPrimeNbr, this.subtractor)
+      this.buildCalculationString(this.randomBigPrimeNbr, this.subtrahend)
       // Decrease available answerTime
-      -- this.availableAnswerTime;
+      if ( !this.started) {
+        -- this.availableAnswerTime;
+      }
+      this.firstAnswer = false;
+
     } else {
        this.wrongAnswerRoutine();
 
     }
     // Check if points are reached to stop.
     if ( this.nbrOfPoints >= this.pointLimit) {
-      this.presentAlert();
+      this.playerDoneAlert();
     }
-    if ( this.started == false) {
+    if ( !this.started ) {
       this.started = true;
       this.timerTick();
     }
@@ -129,8 +149,8 @@ export class HomePage {
     this.myInput.setFocus();
   }
 
-  private updateCalculationDisplay(randomBigPrimeNbr: number, subtractor: number) {
-    this.calculation = randomBigPrimeNbr + " - " + subtractor + " = ";
+  private buildCalculationString(randomBigPrimeNbr: number, subtrahend: number) {
+    this.calculation = randomBigPrimeNbr + " - " + subtrahend + " = ";
 
   }
 
@@ -140,13 +160,17 @@ export class HomePage {
       this.nbrOfPoints--;
 
     }
-    this.classVariable = 'animated shake';
+    if ( this.useShake) {
+      this.classVariable = 'animated shake';
+    }
 
-    let sound = new Howl({
-      src: ['http://localhost:8100/assets/wrong.mp3']
-    });
+    if ( this.useSound) {
+      let sound = new Howl({
+        src: ['http://localhost:8100/assets/wrong.mp3']
+      });
 
-    sound.play();
+      sound.play();
+    }
 
     // increase available answer time and restart
     if ( this.availableAnswerTime < this.maxTimeLimit) {
@@ -154,9 +178,11 @@ export class HomePage {
 
     }
     this.randomBigPrimeNbr = this.getRandomNbr(this.bigPrimeNumbers);
-    this.updateCalculationDisplay(this.randomBigPrimeNbr, this.subtractor)
-    this.counter = this.availableAnswerTime;
-    this.changeColor=true;
+    this.buildCalculationString(this.randomBigPrimeNbr, this.subtrahend)
+    if (this.useRedScreen) {
+      this.changeColor=true;
+
+    }
     this.counterRoutine();
 
   }
@@ -165,6 +191,7 @@ export class HomePage {
   ionViewDidLoad() {
     setTimeout(() => {
       this.myInput.setFocus();
+      this.firstAnswer = true;
     },150);
 
   }
@@ -176,10 +203,11 @@ export class HomePage {
       .take(this.counter)
       .map(() => {
           --this.counter;
-          if ( this.counter <= this.availableAnswerTime -2 ) {
-            this.changeColor=false;
-            this.classVariable = '';
-
+          if ( this.useRedScreen && (this.counter <= this.availableAnswerTime -2) ) {
+              this.changeColor=false;
+            if ( this.useShake) {
+              this.classVariable = '';
+            }
           }
           if ( this.counter <= 0) {
             // timer is over trigger answer false routine
@@ -190,7 +218,7 @@ export class HomePage {
       )
   }
 
-  presentAlert() {
+  playerDoneAlert() {
     let alert = this.alertCtrl.create({
       title: 'Done',
       subTitle: 'You are finished!, you reached '+ this.nbrOfPoints,
