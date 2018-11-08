@@ -126,7 +126,7 @@ export class HomePage {
 
       this.buildCalculationString(this.randomBigPrimeNbr, this.subtrahend)
       // Decrease available answerTime
-      if ( !this.started) {
+      if ( this.started) {
         -- this.availableAnswerTime;
       }
       this.firstAnswer = false;
@@ -198,6 +198,7 @@ export class HomePage {
 
   private counterRoutine() {
     this.counter = this.availableAnswerTime;
+
     this.input = "";
     this.countDown = Observable.timer(0, this.tick)
       .take(this.counter)
