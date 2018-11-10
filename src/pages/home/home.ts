@@ -49,7 +49,7 @@ export class HomePage {
   clockwise: boolean = true;
   color: string = '#ce1609';
   background: string = '#eaeaea';
-  duration: number = 1000;
+  duration: number = 500;
 
   changeColor: boolean = false;
   calculation: string = "";
@@ -198,23 +198,27 @@ export class HomePage {
 
   private counterRoutine() {
     this.counter = this.availableAnswerTime;
-
+    this.current = this.counter;
     this.input = "";
     this.countDown = Observable.timer(0, this.tick)
       .take(this.counter)
       .map(() => {
-          --this.counter;
           if ( this.useRedScreen && (this.counter <= this.availableAnswerTime -2) ) {
               this.changeColor=false;
             if ( this.useShake) {
               this.classVariable = '';
             }
           }
-          if ( this.counter <= 0) {
-            // timer is over trigger answer false routine
-            return this.wrongAnswerRoutine();
-          }
-          return  this.current = this.counter;
+
+        --this.counter;
+        this.current = this.counter
+
+        if ( this.counter == 0) {
+          // timer is over trigger answer false routine
+          this.wrongAnswerRoutine();
+          return;
+        }
+        return this.counter;
         }
       )
   }
