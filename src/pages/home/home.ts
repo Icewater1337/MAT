@@ -31,7 +31,7 @@ export class HomePage {
   // Shake the screen on wrong answer or not
   useShake: boolean = true;
   // use sound on wrong answer or not
-  useSound: boolean = false;
+  useSound: boolean = true;
   // use red screen on wrong answer or not
   useRedScreen: boolean = true;
 
@@ -166,7 +166,7 @@ export class HomePage {
 
     if ( this.useSound) {
       let sound = new Howl({
-        src: ['http://localhost:8100/assets/wrong.mp3']
+        src: ['http://localhost:8100/assets/wrong2.mp3']
       });
 
       sound.play();
