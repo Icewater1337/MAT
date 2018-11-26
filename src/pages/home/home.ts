@@ -166,7 +166,9 @@ export class HomePage {
 
     if ( this.useSound) {
       let sound = new Howl({
-        src: ['http://localhost:8100/assets/wrong2.mp3']
+        //src: ['http://localhost:8100/assets/wrong2.mp3']
+        src: ['http://htiweb.tic.heia-fr.ch/stress-app/assets/wrong2.mp3']
+
       });
 
       sound.play();
