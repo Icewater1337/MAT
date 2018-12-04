@@ -6,6 +6,7 @@ import { StatusBar } from '@ionic-native/status-bar';
 import {RoundProgressModule} from 'angular-svg-round-progressbar';
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
+import { NgProgressModule } from 'ngx-progressbar';
 
 
 @NgModule({
@@ -16,7 +17,8 @@ import { HomePage } from '../pages/home/home';
   imports: [
     BrowserModule,
     IonicModule.forRoot(MyApp),
-    RoundProgressModule
+    RoundProgressModule,
+    NgProgressModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [

@@ -6,6 +6,7 @@ import 'rxjs/add/operator/map'
 import 'rxjs/add/operator/take'
 import {Howl, Howler} from 'howler';
 import {Component,  ViewChild} from '@angular/core';
+import { NgProgress } from 'ngx-progressbar';
 
 
 
@@ -17,9 +18,9 @@ export class HomePage {
 
   // Variables: Adjust as needed.
   // The default subtrahends
-  subtrahends: number[] = [7,13];
+  subtrahends: number[] = [7, 13];
   //After 4 correct answers are given, one of the folowing is selected as the new subtrahend
-  additionalSubtrahends: number[] = [11,17,19,23,29];
+  additionalSubtrahends: number[] = [11, 17, 19, 23, 29];
   // Initial time that is available for each answer
   availableAnswerTime: number = 5;
   // Maximum available time for one answer
@@ -33,7 +34,7 @@ export class HomePage {
   // use sound on wrong answer or not
   useSound: boolean = true;
   // use red screen on wrong answer or not
-  useRedScreen: boolean = true;
+  useRedScreen: boolean = false;
 
   // DO not touch the following
   classVariable: string = '';
@@ -58,9 +59,10 @@ export class HomePage {
   bigPrimeNumbers: number[] = primeNbrContainer.getBigPrimeNbrs();
   input: string = "";
 
-  @ViewChild('inputField') myInput ;
+  @ViewChild('inputField') myInput;
   subtrahend: number = 0;
   totalTimer;
+  progressBarTimer;
   started = false;
   countDown;
   tick = 1000;
@@ -75,7 +77,7 @@ export class HomePage {
     return list[Math.floor(Math.random() * list.length)];
   }
 
-  constructor(public navCtrl: NavController, private alertCtrl: AlertController, platform: Platform) {
+  constructor(public navCtrl: NavController, private alertCtrl: AlertController, platform: Platform, public ngProgress: NgProgress) {
     this.randomBigPrimeNbr = this.getRandomNbr(this.bigPrimeNumbers);
     this.subtrahend = this.getRandomNbr(this.subtrahends);
     this.buildCalculationString(this.randomBigPrimeNbr, this.subtrahend);
@@ -89,8 +91,7 @@ export class HomePage {
 
 
   timerTick() {
-    this.totalTimer = setTimeout(() =>
-    {
+    this.totalTimer = setTimeout(() => {
       this.totalTimeCounter--;
       if (this.totalTimeCounter <= 0) {
         this.playerDoneAlert();
@@ -102,44 +103,62 @@ export class HomePage {
     }, 1000);
 
   }
+  progressBarCounter:number = 0;
+
+  progressBarTick() {
+    this.progressBarTimer = setTimeout(() => {
+      this.ngProgress.set(1-this.progressBarCounter/this.availableAnswerTime);
+      this.progressBarCounter = this.progressBarCounter - 0.1;
+      if ( this.current <= 0 || this.ngProgress.progress >= 1) {
+        this.ngProgress.set(0);
+        this.progressBarCounter = this.current;
+      }
+
+      this.progressBarTick();
+    }, 100);
+
+  }
+
   updateCalc() {
 
-   if (this.myInput._value.length <4) {
-     return;
-   }
+    if (this.myInput._value.length < 4) {
+      return;
+    }
 
     let wasInputRight: boolean;
-    wasInputRight =  (parseInt(this.input) == (this.randomBigPrimeNbr - this.subtrahend));
-    if ( wasInputRight) {
+    wasInputRight = (parseInt(this.input) == (this.randomBigPrimeNbr - this.subtrahend));
+    if (wasInputRight) {
       // add more points for consecutive correct answers
       this.rightAnswerCounter++;
-      this.consecutiveCorrectAnswerCounter ++;
+      this.consecutiveCorrectAnswerCounter++;
       this.nbrOfPoints = this.nbrOfPoints + this.consecutiveCorrectAnswerCounter;
 
       this.randomBigPrimeNbr = this.randomBigPrimeNbr - this.subtrahend;
 
 
       // Add random event if 4 or more correct answers are given consecutively
-      if ( (this.rightAnswerCounter % 4) == 0) {
+      if ((this.rightAnswerCounter % 4) == 0) {
         this.subtrahend = this.getRandomNbr(this.additionalSubtrahends);
       }
 
       this.buildCalculationString(this.randomBigPrimeNbr, this.subtrahend)
       // Decrease available answerTime
-      if ( this.started) {
-        -- this.availableAnswerTime;
+      if (this.started) {
+        --this.availableAnswerTime;
+        this.progressBarCounter = this.current;
+        this.ngProgress.set(1);
       }
       this.firstAnswer = false;
 
     } else {
-       this.wrongAnswerRoutine();
+      this.wrongAnswerRoutine();
 
     }
     // Check if points are reached to stop.
-    if ( this.nbrOfPoints >= this.pointLimit) {
+    if (this.nbrOfPoints >= this.pointLimit) {
       this.playerDoneAlert();
     }
-    if ( !this.started ) {
+    if (!this.started) {
       this.started = true;
       this.timerTick();
     }
@@ -156,15 +175,15 @@ export class HomePage {
 
   private wrongAnswerRoutine() {
     this.consecutiveCorrectAnswerCounter = 0;
-    if ( this.nbrOfPoints > 0) {
+    if (this.nbrOfPoints > 0) {
       this.nbrOfPoints--;
 
     }
-    if ( this.useShake) {
+    if (this.useShake) {
       this.classVariable = 'animated shake';
     }
 
-    if ( this.useSound) {
+    if (this.useSound) {
       let sound = new Howl({
         //src: ['http://localhost:8100/assets/wrong2.mp3']
         src: ['http://htiweb.tic.heia-fr.ch/stress-app/assets/wrong2.mp3']
@@ -175,14 +194,18 @@ export class HomePage {
     }
 
     // increase available answer time and restart
-    if ( this.availableAnswerTime < this.maxTimeLimit) {
-      this.availableAnswerTime = this.availableAnswerTime +1;
+    if (this.availableAnswerTime < this.maxTimeLimit) {
+      this.availableAnswerTime = this.availableAnswerTime + 1;
+      this.progressBarCounter = this.current;
+      if ( !this.started) {
+        this.progressBarTick();
+      }
 
     }
     this.randomBigPrimeNbr = this.getRandomNbr(this.bigPrimeNumbers);
     this.buildCalculationString(this.randomBigPrimeNbr, this.subtrahend)
     if (this.useRedScreen) {
-      this.changeColor=true;
+      this.changeColor = true;
 
     }
     this.counterRoutine();
@@ -194,7 +217,7 @@ export class HomePage {
     setTimeout(() => {
       this.myInput.setFocus();
       this.firstAnswer = true;
-    },150);
+    }, 150);
 
   }
 
@@ -202,36 +225,42 @@ export class HomePage {
     this.counter = this.availableAnswerTime;
     this.current = this.counter;
     this.input = "";
+
     this.countDown = Observable.timer(0, this.tick)
-      .take(this.counter)
-      .map(() => {
-          if ( this.useRedScreen && (this.counter <= this.availableAnswerTime -2) ) {
-              this.changeColor=false;
-            if ( this.useShake) {
-              this.classVariable = '';
-            }
-          }
+     .take(this.counter)
+     .map(() => {
+     if ( this.useRedScreen && (this.counter <= this.availableAnswerTime -2) ) {
+     this.changeColor=false;
+     if ( this.useShake) {
+     this.classVariable = '';
+     }
+     }
 
-        --this.counter;
-        this.current = this.counter
+     --this.counter;
+     this.current = this.counter;
 
-        if ( this.counter == 0) {
-          // timer is over trigger answer false routine
-          this.wrongAnswerRoutine();
-          return;
-        }
-        return this.counter;
-        }
-      )
+     if ( this.counter == 0) {
+     // timer is over trigger answer false routine
+     this.wrongAnswerRoutine();
+     return;
+     }
+     return this.counter;
+     }
+     )
   }
 
   playerDoneAlert() {
     let alert = this.alertCtrl.create({
       title: 'Done',
-      subTitle: 'You are finished!, you reached '+ this.nbrOfPoints,
+      subTitle: 'You are finished!, you reached ' + this.nbrOfPoints,
       buttons: ['Dismiss']
     });
     this.countDown = null;
     alert.present();
+  }
+
+  ngOnInit() {
+    this.ngProgress.start();
+    this.ngProgress.done();
   }
 }

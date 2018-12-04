@@ -1,29 +1,22 @@
 <link href="assets/css/Animate.css" rel="stylesheet">
 
-<ion-content padding [ngClass]="{'bg-red': changeColor}">
+<div>
+  <ng-progress [minimum]="0" [maximum]="1"
+               [showSpinner]="false" [direction]="'rightToLeftIncreased'"
+               [color]="'red'" [thick]="true" [ease]="'linear'"
+  ></ng-progress>
+</div>
 
-  <div id="container" [class]="classVariable">
+<ion-content pading [class]="classVariable" [ngClass]="{'bg-red': changeColor}">
+
+  <div id="container">
+
 
     <ion-list>
       <ion-item>
         <div class="progress-wrapper"  ng-style="{'font-size': getFontSize()}">
-          <div class="progress">
-            <h2 class="progress"><b>{{countDown | async}}</b></h2>
-          </div>
+          <h2><b>{{countDown | async}}</b></h2>
 
-          <round-progress
-            [current]="current"
-            [max]="availableAnswerTime"
-            [stroke]=15
-            [radius]=100
-            [semicircle]=false
-            [rounded]=false
-            [responsive]=false
-            [clockwise]=false
-            [color]="color"
-            [background]="background"
-            [duration]="duration"
-          ></round-progress>
         </div>
 
       </ion-item>
