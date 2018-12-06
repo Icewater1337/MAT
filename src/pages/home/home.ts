@@ -199,7 +199,7 @@ export class HomePage {
       this.availableAnswerTime = this.availableAnswerTime + 1;
       this.progressBarCounter = this.current;
       if ( !this.started) {
-        this.progressBarTick();
+       // this.progressBarTick();
       }
 
     }
@@ -231,6 +231,7 @@ export class HomePage {
         if ( this.counter == 0) {
           this.wrongAnswerRoutine();
         }
+        this.ngProgress.set(1- this.counter/this.availableAnswerTime);
         return this.counter--;
 
       })
