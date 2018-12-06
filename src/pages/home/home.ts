@@ -145,6 +145,7 @@ export class HomePage {
       // Decrease available answerTime
       if (this.started) {
         --this.availableAnswerTime;
+        this.counter = this.availableAnswerTime;
         this.progressBarCounter = this.current;
         this.ngProgress.set(1);
       }
@@ -160,10 +161,10 @@ export class HomePage {
     }
     if (!this.started) {
       this.started = true;
+      this.startCounterRoutine();
       this.timerTick();
     }
 
-    this.counterRoutine();
 
     this.myInput.setFocus();
   }
@@ -208,7 +209,7 @@ export class HomePage {
       this.changeColor = true;
 
     }
-    this.counterRoutine();
+    this.counter = this.availableAnswerTime;
 
   }
 
@@ -221,33 +222,23 @@ export class HomePage {
 
   }
 
-  private counterRoutine() {
-    this.counter = this.availableAnswerTime;
-    this.current = this.counter;
+  private startCounterRoutine() {
     this.input = "";
+    this.countDown = Observable.timer(0,this.tick)
+      .map(() => {
+        console.log(this.counter);
 
-    this.countDown = Observable.timer(0, this.tick)
-     .take(this.counter)
-     .map(() => {
-     if ( this.useRedScreen && (this.counter <= this.availableAnswerTime -2) ) {
-     this.changeColor=false;
-     if ( this.useShake) {
-     this.classVariable = '';
-     }
-     }
+        if ( this.counter == 0) {
+          this.wrongAnswerRoutine();
+        }
+        return this.counter--;
 
-     --this.counter;
-     this.current = this.counter;
-
-     if ( this.counter == 0) {
-     // timer is over trigger answer false routine
-     this.wrongAnswerRoutine();
-     return;
-     }
-     return this.counter;
-     }
-     )
+      })
+      .takeWhile(counter => counter >= 0);
   }
+
+
+
 
   playerDoneAlert() {
     let alert = this.alertCtrl.create({
