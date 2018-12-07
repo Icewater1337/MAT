@@ -28,6 +28,24 @@ page-home {
     position: relative;
     margin:20px auto;
     font-size: 21px;
+    &.op02{
+      opacity: 0.2;
+    }
+    &.op04{
+      opacity: 0.4;
+    }
+    &.op06{
+      opacity: 0.6;
+    }
+    &.op08{
+      opacity: 0.8;
+    }
+    &.op1{
+      opacity: 1.0;
+    }
+    &.op0{
+      opacity: 0.0;
+    }
   }
   .progress{
     position: absolute;

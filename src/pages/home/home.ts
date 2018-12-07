@@ -25,7 +25,7 @@ export class HomePage {
   // Maximum available time for one answer
   maxTimeLimit: number = 20;
   // Points to reach until it stops
-  pointLimit: number = 70;
+  pointLimit: number = 65;
   // Time to reach until it stops
   totalTimeCounter = 600;
   // Shake the screen on wrong answer or not
@@ -37,6 +37,9 @@ export class HomePage {
 
   // DO not touch the following
   classVariable: string = '';
+
+  progressVariable: string ='progress-wrapper op1';
+  opList: string[] = ['op1', 'op08', 'op06', 'op04', 'op02', 'op0']
 
   // parts needed for the countdown timer
 
@@ -50,6 +53,7 @@ export class HomePage {
   color: string = '#ce1609';
   background: string = '#eaeaea';
   duration: number = 500;
+  wrongAnswerThroughTimeoutCounter: number = 0;
 
   changeColor: boolean = false;
   calculation: string = "";
@@ -69,6 +73,7 @@ export class HomePage {
   rightAnswerCounter: number;
   nbrOfPoints: number;
   firstAnswer: boolean;
+  private opIterator: number = 1;
 
 
   getRandomNbr(list: number[]) {
@@ -111,6 +116,7 @@ export class HomePage {
     let wasInputRight: boolean;
     wasInputRight =  (parseInt(this.input) == (this.randomBigPrimeNbr - this.subtrahend));
     if ( wasInputRight) {
+      this.wrongAnswerThroughTimeoutCounter = 0;
       // add more points for consecutive correct answers
       this.rightAnswerCounter++;
       this.consecutiveCorrectAnswerCounter ++;
@@ -118,7 +124,12 @@ export class HomePage {
 
       this.randomBigPrimeNbr = this.randomBigPrimeNbr - this.subtrahend;
 
-
+      if ( this.consecutiveCorrectAnswerCounter % 2 == 0) {
+        if (this.opIterator > 0) {
+          this.opIterator--;
+        }
+        this.progressVariable = 'progress-wrapper '+ this.opList[this.opIterator];
+      }
       // Add random event if 4 or more correct answers are given consecutively
       if ( (this.rightAnswerCounter % 4) == 0) {
         var subtrahendOld = this.subtrahend
@@ -158,6 +169,13 @@ export class HomePage {
   }
 
   private wrongAnswerRoutine() {
+
+    if ( this.wrongAnswerThroughTimeoutCounter > 0 && this.availableAnswerTime > 5) {
+      this.progressVariable = 'progress-wrapper '+ this.opList[this.opIterator];
+      if ( this.opIterator < 5) {
+        this.opIterator++;
+      }
+    }
     this.consecutiveCorrectAnswerCounter = 0;
     if ( this.nbrOfPoints > 0) {
       this.nbrOfPoints--;
@@ -220,6 +238,7 @@ export class HomePage {
 
         if ( this.counter == 0) {
           // timer is over trigger answer false routine
+          this.wrongAnswerThroughTimeoutCounter++;
           this.wrongAnswerRoutine();
           return;
         }
