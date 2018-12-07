@@ -121,7 +121,10 @@ export class HomePage {
 
       // Add random event if 4 or more correct answers are given consecutively
       if ( (this.rightAnswerCounter % 4) == 0) {
-        this.subtrahend = this.getRandomNbr(this.additionalSubtrahends);
+        var subtrahendOld = this.subtrahend
+        while ( subtrahendOld == this.subtrahend) {
+          this.subtrahend = this.getRandomNbr(this.additionalSubtrahends);
+        }
       }
 
       this.buildCalculationString(this.randomBigPrimeNbr, this.subtrahend)
