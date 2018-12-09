@@ -34,7 +34,7 @@ export class HomePage {
   // use sound on wrong answer or not
   useSound: boolean = true;
   // use red screen on wrong answer or not
-  useRedScreen: boolean = false;
+  useRedScreen: boolean = true;
 
   // DO not touch the following
   classVariable: string = '';
@@ -65,7 +65,7 @@ export class HomePage {
   progressBarTimer;
   started = false;
   countDown;
-  tick = 1000;
+  tick = 100;
   counter = 5;
   consecutiveCorrectAnswerCounter = 0;
   rightAnswerCounter: number;
@@ -105,19 +105,6 @@ export class HomePage {
   }
   progressBarCounter:number = 0;
 
-  progressBarTick() {
-    this.progressBarTimer = setTimeout(() => {
-      this.ngProgress.set(1-this.progressBarCounter/this.availableAnswerTime);
-      this.progressBarCounter = this.progressBarCounter - 0.1;
-      if ( this.current <= 0 || this.ngProgress.progress >= 1) {
-        this.ngProgress.set(0);
-        this.progressBarCounter = this.current;
-      }
-
-      this.progressBarTick();
-    }, 100);
-
-  }
 
   updateCalc() {
 
@@ -128,6 +115,7 @@ export class HomePage {
     let wasInputRight: boolean;
     wasInputRight = (parseInt(this.input) == (this.randomBigPrimeNbr - this.subtrahend));
     if (wasInputRight) {
+      this.input = "";
       // add more points for consecutive correct answers
       this.rightAnswerCounter++;
       this.consecutiveCorrectAnswerCounter++;
@@ -146,7 +134,6 @@ export class HomePage {
       if (this.started) {
         --this.availableAnswerTime;
         this.counter = this.availableAnswerTime;
-        this.progressBarCounter = this.current;
         this.ngProgress.set(1);
       }
       this.firstAnswer = false;
@@ -175,6 +162,7 @@ export class HomePage {
   }
 
   private wrongAnswerRoutine() {
+    this.input = "";
     this.consecutiveCorrectAnswerCounter = 0;
     if (this.nbrOfPoints > 0) {
       this.nbrOfPoints--;
@@ -223,16 +211,21 @@ export class HomePage {
   }
 
   private startCounterRoutine() {
-    this.input = "";
     this.countDown = Observable.timer(0,this.tick)
       .map(() => {
-        console.log(this.counter);
 
-        if ( this.counter == 0) {
+        if (this.counter < this.availableAnswerTime -0.5 && this.useShake) {
+          this.classVariable = '';
+        }
+        if (this.counter < this.availableAnswerTime -0.1 && this.useRedScreen) {
+          this.changeColor = false;
+        }
+        if ( this.counter <= 0.0) {
           this.wrongAnswerRoutine();
         }
         this.ngProgress.set(1- this.counter/this.availableAnswerTime);
-        return this.counter--;
+        this.counter = this.counter -  this.tick/1000;
+        return this.counter.toFixed(0);
 
       })
       .takeWhile(counter => counter >= 0);
