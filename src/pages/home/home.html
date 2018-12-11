@@ -1,6 +1,6 @@
 <link href="assets/css/Animate.css" rel="stylesheet">
 
-<div>
+<div *ngIf="useBar">
   <ng-progress [minimum]="0" [maximum]="1"
                [showSpinner]="false" [direction]="'rightToLeftIncreased'"
                [color]="'red'" [thick]="true" [ease]="'linear'"
