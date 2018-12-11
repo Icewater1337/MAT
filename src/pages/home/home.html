@@ -14,10 +14,31 @@
 
     <ion-list>
       <ion-item>
-        <div class="progress-wrapper"  ng-style="{'font-size': getFontSize()}">
+        <div class="progress-wrapper" *ngIf="useBar" ng-style="{'font-size': getFontSize()}">
           <h2><b>{{countDown |async}}</b></h2>
 
         </div>
+
+        <div *ngIf="!useBar" [class]="progressVariable"  ng-style="{'font-size': getFontSize()}">
+          <div class="progress">
+            <h2 class="progress"><b>{{countDown | async}}</b></h2>
+          </div>
+
+          <round-progress
+            [current]="counter"
+            [max]="availableAnswerTime"
+            [stroke]=15
+            [radius]=100
+            [semicircle]=false
+            [rounded]=false
+            [responsive]=false
+            [clockwise]=false
+            [color]="color"
+            [background]="background"
+            [duration]="duration"
+          ></round-progress>
+        </div>
+
 
       </ion-item>
       <ion-item id="calc">

@@ -26,7 +26,7 @@ export class HomePage {
   // Maximum available time for one answer
   maxTimeLimit: number = 20;
   // Points to reach until it stops
-  pointLimit: number = 70;
+  pointLimit: number = 65;
   // Time to reach until it stops
   totalTimeCounter = 600;
   // Shake the screen on wrong answer or not
@@ -36,10 +36,13 @@ export class HomePage {
   // use red screen on wrong answer or not
   useRedScreen: boolean = true;
   // whether to use circualr countdown or other
-  useBar: boolean = true;
+  useBar: boolean = false;
 
   // DO not touch the following
   classVariable: string = '';
+
+  progressVariable: string ='progress-wrapper op1';
+  opList: string[] = ['op1', 'op08', 'op06', 'op04', 'op02', 'op0']
 
   // parts needed for the countdown timer
 
@@ -53,6 +56,7 @@ export class HomePage {
   color: string = '#ce1609';
   background: string = '#eaeaea';
   duration: number = 500;
+  wrongAnswerThroughTimeout: boolean = false;
 
   changeColor: boolean = false;
   calculation: string = "";
@@ -64,7 +68,8 @@ export class HomePage {
   @ViewChild('inputField') myInput;
   subtrahend: number = 0;
   totalTimer;
-  progressBarTimer;
+
+
   started = false;
   countDown;
   tick = 100;
@@ -73,6 +78,7 @@ export class HomePage {
   rightAnswerCounter: number;
   nbrOfPoints: number;
   firstAnswer: boolean;
+  private opIterator: number = 1;
 
 
   getRandomNbr(list: number[]) {
@@ -118,6 +124,7 @@ export class HomePage {
     wasInputRight = (parseInt(this.input) == (this.randomBigPrimeNbr - this.subtrahend));
     if (wasInputRight) {
       this.input = "";
+      this.wrongAnswerThroughTimeout = false;
       // add more points for consecutive correct answers
       this.rightAnswerCounter++;
       this.consecutiveCorrectAnswerCounter++;
@@ -125,10 +132,18 @@ export class HomePage {
 
       this.randomBigPrimeNbr = this.randomBigPrimeNbr - this.subtrahend;
 
-
+      if ( this.consecutiveCorrectAnswerCounter % 2 == 0) {
+        if (this.opIterator > 0) {
+          this.opIterator--;
+        }
+        this.progressVariable = 'progress-wrapper '+ this.opList[this.opIterator];
+      }
       // Add random event if 4 or more correct answers are given consecutively
-      if ((this.rightAnswerCounter % 4) == 0) {
-        this.subtrahend = this.getRandomNbr(this.additionalSubtrahends);
+      if ( (this.rightAnswerCounter % 4) == 0) {
+        var subtrahendOld = this.subtrahend
+        while ( subtrahendOld == this.subtrahend) {
+          this.subtrahend = this.getRandomNbr(this.additionalSubtrahends);
+        }
       }
 
       this.buildCalculationString(this.randomBigPrimeNbr, this.subtrahend)
@@ -164,6 +179,13 @@ export class HomePage {
   }
 
   private wrongAnswerRoutine() {
+
+    if ( this.wrongAnswerThroughTimeout) {
+      this.progressVariable = 'progress-wrapper '+ this.opList[this.opIterator];
+      if ( this.opIterator < 5) {
+        this.opIterator++;
+      }
+    }
     this.input = "";
     this.consecutiveCorrectAnswerCounter = 0;
     if (this.nbrOfPoints > 0) {
@@ -223,14 +245,15 @@ export class HomePage {
           this.changeColor = false;
         }
         if ( this.counter <= 0.0) {
+          this.wrongAnswerThroughTimeout = true;
           this.wrongAnswerRoutine();
         }
         this.ngProgress.set(1- this.counter/this.availableAnswerTime);
         this.counter = this.counter -  this.tick/1000;
-        return this.counter.toFixed(0);
+        return this.counter >= 0 ?this.counter.toFixed(0) : 0;
 
       })
-      .takeWhile(counter => counter >= 0);
+      .takeWhile(x => x >= 0);
   }
 
 
