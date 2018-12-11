@@ -35,6 +35,8 @@ export class HomePage {
   useSound: boolean = true;
   // use red screen on wrong answer or not
   useRedScreen: boolean = true;
+  // whether to use circualr countdown or other
+  useBar: boolean = true;
 
   // DO not touch the following
   classVariable: string = '';
