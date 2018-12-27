@@ -26,9 +26,9 @@ export class HomePage {
   // Maximum available time for one answer
   maxTimeLimit: number = 20;
   // Points to reach until it stops
-  pointLimit: number = 65;
+  pointLimit: number = 45;
   // Time to reach until it stops
-  totalTimeCounter = 600;
+  totalTimeCounter = 480;
   // Shake the screen on wrong answer or not
   useShake: boolean = true;
   // use sound on wrong answer or not
@@ -39,7 +39,7 @@ export class HomePage {
   useBar: boolean = false;
 
   // DO not touch the following
-  classVariable: string = '';
+  classVariable: string = 'blueBg';
 
   progressVariable: string ='progress-wrapper op1';
   opList: string[] = ['op1', 'op08', 'op06', 'op04', 'op02', 'op0']
@@ -55,7 +55,7 @@ export class HomePage {
   clockwise: boolean = true;
   color: string = '#ce1609';
   background: string = '#eaeaea';
-  duration: number = 500;
+  duration: number = 600;
   wrongAnswerThroughTimeout: boolean = false;
 
   changeColor: boolean = false;
@@ -198,8 +198,8 @@ export class HomePage {
 
     if (this.useSound) {
       let sound = new Howl({
-        //src: ['http://localhost:8100/assets/wrong2.mp3']
-        src: ['http://htiweb.tic.heia-fr.ch/stress-app/assets/wrong2.mp3']
+        src: ['http://localhost:8100/assets/wrong2.mp3']
+        //src: ['http://htiweb.tic.heia-fr.ch/stress-app/assets/wrong2.mp3']
 
       });
 
@@ -239,7 +239,7 @@ export class HomePage {
       .map(() => {
 
         if (this.counter < this.availableAnswerTime -0.5 && this.useShake) {
-          this.classVariable = '';
+          this.classVariable = 'blueBg';
         }
         if (this.counter < this.availableAnswerTime -0.1 && this.useRedScreen) {
           this.changeColor = false;
@@ -257,20 +257,51 @@ export class HomePage {
   }
 
 
-
-
   playerDoneAlert() {
     let alert = this.alertCtrl.create({
       title: 'Done',
-      subTitle: 'You are finished!, you reached ' + this.nbrOfPoints,
+      subTitle: 'You are done!',
       buttons: ['Dismiss']
     });
     this.countDown = null;
     alert.present();
+    this.saveTextAsFile(String(this.nbrOfPoints), "points.txt")
   }
+
 
   ngOnInit() {
     this.ngProgress.start();
     this.ngProgress.done();
   }
+
+  saveTextAsFile (data, filename){
+
+  if(!data) {
+    console.error('Console.save: No data')
+    return;
+  }
+
+  if(!filename) filename = 'console.json'
+
+  var blob = new Blob([data], {type: 'text/plain'}),
+    e    = document.createEvent('MouseEvents'),
+    a    = document.createElement('a')
+// FOR IE:
+
+  if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+    window.navigator.msSaveOrOpenBlob(blob, filename);
+  }
+  else{
+    var e = document.createEvent('MouseEvents'),
+      a = document.createElement('a');
+
+    a.download = filename;
+    a.href = window.URL.createObjectURL(blob);
+    a.dataset.downloadurl = ['text/plain', a.download, a.href].join(':');
+    e.initEvent('click', true, false, window,
+      0, 0, 0, 0, 0, false, false, false, false, 0, null);
+    a.dispatchEvent(e);
+  }
+}
+
 }

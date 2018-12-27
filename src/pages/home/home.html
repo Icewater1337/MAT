@@ -7,14 +7,14 @@
   ></ng-progress>
 </div>
 
-<ion-content pading [class]="classVariable" [ngClass]="{'bg-red': changeColor}">
+<ion-content pading [class]="classVariable" class="blueBg" [ngClass]="{'bg-red': changeColor}">
 
   <div id="container">
 
 
-    <ion-list>
-      <ion-item>
-        <div class="progress-wrapper" *ngIf="useBar" ng-style="{'font-size': getFontSize()}">
+    <ion-list class="blueBg">
+      <ion-item class="blueBg">
+        <div class="progress-wrapper blueBg" *ngIf="useBar" ng-style="{'font-size': getFontSize()}">
           <h2><b>{{countDown |async}}</b></h2>
 
         </div>
