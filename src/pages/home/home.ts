@@ -26,7 +26,7 @@ export class HomePage {
   // Maximum available time for one answer
   maxTimeLimit: number = 20;
   // Points to reach until it stops
-  pointLimit: number = 45;
+  pointLimit: number = 70;
   // Time to reach until it stops
   totalTimeCounter = 480;
   // Shake the screen on wrong answer or not
@@ -40,6 +40,8 @@ export class HomePage {
 
   // DO not touch the following
   classVariable: string = 'blueBg';
+
+  now: Date;
 
   progressVariable: string ='progress-wrapper op1';
   opList: string[] = ['op1', 'op08', 'op06', 'op04', 'op02', 'op0']
@@ -77,6 +79,7 @@ export class HomePage {
   consecutiveCorrectAnswerCounter = 0;
   rightAnswerCounter: number;
   nbrOfPoints: number;
+  nbrOfWrongAnswers: number;
   firstAnswer: boolean;
   private opIterator: number = 1;
 
@@ -93,6 +96,7 @@ export class HomePage {
     this.consecutiveCorrectAnswerCounter = 0;
     this.rightAnswerCounter = 0;
     this.nbrOfPoints = 0;
+    this.nbrOfWrongAnswers = 0;
 
 
   }
@@ -164,6 +168,7 @@ export class HomePage {
       this.playerDoneAlert();
     }
     if (!this.started) {
+      this.now = new Date;
       this.started = true;
       this.startCounterRoutine();
       this.timerTick();
@@ -179,7 +184,7 @@ export class HomePage {
   }
 
   private wrongAnswerRoutine() {
-
+    this.nbrOfWrongAnswers++;
     if ( this.wrongAnswerThroughTimeout) {
       this.progressVariable = 'progress-wrapper '+ this.opList[this.opIterator];
       if ( this.opIterator < 5) {
@@ -265,7 +270,7 @@ export class HomePage {
     });
     this.countDown = null;
     alert.present();
-    this.saveTextAsFile(String(this.nbrOfPoints), "points.txt")
+    this.saveTextAsFile("Right:" + String(this.nbrOfPoints)+ "Wrong:"+ String(this.nbrOfWrongAnswers)+ "Date:" +String(this.now.toTimeString()), "points.txt")
   }
 
 
@@ -298,8 +303,7 @@ export class HomePage {
     a.download = filename;
     a.href = window.URL.createObjectURL(blob);
     a.dataset.downloadurl = ['text/plain', a.download, a.href].join(':');
-    e.initEvent('click', true, false, window,
-      0, 0, 0, 0, 0, false, false, false, false, 0, null);
+    e.initEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
     a.dispatchEvent(e);
   }
 }
